@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>En Claro — Entiende cualquier carta oficial</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root{
+    --paper:#ece3d2;
+    --paper-2:#e3d8c2;
+    --ink:#2b2419;
+    --ink-soft:#5c513f;
+    --stamp:#b23a2e;       /* rojo sello oficial */
+    --stamp-deep:#8f2c22;
+    --seal:#1f4e46;        /* verde tinta tranquilizadora */
+    --seal-bright:#2f7064;
+    --line:rgba(43,36,25,.16);
+    --card:#f7f1e4;
+    --gold:#9a7b3f;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'DM Sans',sans-serif;line-height:1.55;overflow-x:hidden;min-height:100vh;
+    background-image:
+      repeating-linear-gradient(0deg, rgba(43,36,25,.014) 0 1px, transparent 1px 26px),
+      radial-gradient(70% 50% at 50% -5%, rgba(178,58,46,.06), transparent 60%);
+  }
+  ::selection{background:var(--stamp);color:var(--paper)}
+  .wrap{max-width:600px;margin:0 auto;padding:0 20px 90px}
+
+  /* HEADER — like a letterhead */
+  header{padding:32px 0 10px;border-bottom:2px solid var(--ink);position:relative}
+  .seal-mark{
+    display:inline-flex;align-items:center;gap:9px;margin-bottom:18px;
+    font-family:'JetBrains Mono';font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--stamp);
+  }
+  .seal-mark::before{content:"";width:26px;height:26px;border-radius:50%;border:2px solid var(--stamp);
+    background:radial-gradient(circle,transparent 38%,rgba(178,58,46,.12) 40%);flex:0 0 auto;
+    box-shadow:inset 0 0 0 3px var(--paper)}
+  h1{font-family:'Newsreader';font-weight:600;font-size:clamp(38px,11vw,60px);line-height:.95;letter-spacing:-.02em}
+  h1 .em{font-style:italic;color:var(--stamp)}
+  .lede{margin-top:14px;font-family:'Newsreader';font-size:18px;color:var(--ink-soft);max-width:92%;font-weight:400}
+  .stamp-rot{position:absolute;top:26px;right:6px;transform:rotate(-9deg);
+    border:2.5px solid var(--stamp);color:var(--stamp);border-radius:7px;padding:6px 11px 5px;
+    font-family:'JetBrains Mono';font-size:10px;letter-spacing:.12em;text-transform:uppercase;font-weight:500;
+    opacity:.85;text-align:center;line-height:1.25}
+  @media(max-width:430px){.stamp-rot{display:none}}
+
+  /* INTRO STRIP */
+  .how{display:flex;gap:0;margin:22px 0 4px;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--card)}
+  .how div{flex:1;padding:13px 12px;font-size:12px;color:var(--ink-soft);border-right:1px solid var(--line);text-align:center}
+  .how div:last-child{border-right:none}
+  .how b{display:block;font-family:'JetBrains Mono';font-size:15px;color:var(--stamp);margin-bottom:3px}
+
+  /* COMPOSER */
+  .composer{margin-top:20px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;
+    box-shadow:0 22px 44px -28px rgba(43,36,25,.5)}
+  .field-label{display:block;font-family:'JetBrains Mono';font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:11px}
+  textarea{width:100%;min-height:150px;resize:vertical;background:#fffdf7;border:1px solid var(--line);
+    border-radius:11px;padding:15px;color:var(--ink);font-family:'JetBrains Mono';font-size:13.5px;line-height:1.6;transition:.2s}
+  textarea:focus{outline:none;border-color:var(--seal);box-shadow:0 0 0 3px rgba(31,78,70,.1)}
+  textarea::placeholder{color:#9a8e76}
+
+  .kinds{margin-top:13px;display:flex;flex-wrap:wrap;gap:7px}
+  .kind{cursor:pointer;font-family:'DM Sans';font-weight:500;font-size:12.5px;color:var(--ink-soft);
+    background:transparent;border:1px solid var(--line);border-radius:8px;padding:8px 13px;transition:.16s}
+  .kind:hover{border-color:var(--seal);color:var(--ink)}
+  .kind.on{background:var(--seal);color:#f3ede0;border-color:var(--seal)}
+
+  .go{margin-top:16px;width:100%;cursor:pointer;border:none;border-radius:11px;padding:17px;
+    background:var(--seal);color:#f3ede0;font-family:'DM Sans';font-weight:700;font-size:16.5px;letter-spacing:.01em;transition:.2s;
+    box-shadow:0 12px 26px -12px rgba(31,78,70,.6)}
+  .go:hover{background:var(--seal-bright);transform:translateY(-2px)}
+  .go:active{transform:none}
+  .go:disabled{opacity:.5;cursor:not-allowed;transform:none}
+  .meter{text-align:center;margin-top:12px;font-family:'JetBrains Mono';font-size:11.5px;color:var(--ink-soft)}
+  .meter b{color:var(--stamp)}
+  .err{display:none;color:var(--stamp);font-size:13px;text-align:center;margin-top:10px;font-weight:500}
+  .err.on{display:block}
+
+  /* LOADING */
+  .loading{display:none;text-align:center;padding:40px 0}
+  .loading.on{display:block}
+  .scan{width:54px;height:54px;margin:0 auto;border:2px solid var(--line);border-radius:8px;position:relative;overflow:hidden;background:#fffdf7}
+  .scan::before{content:"";position:absolute;left:0;right:0;height:2px;background:var(--stamp);top:0;animation:scan 1.3s ease-in-out infinite;box-shadow:0 0 8px var(--stamp)}
+  @keyframes scan{0%,100%{top:6px}50%{top:46px}}
+  .loading p{margin-top:16px;font-family:'JetBrains Mono';font-size:12px;color:var(--ink-soft);letter-spacing:.05em}
+
+  /* RESULT */
+  #result{display:none;margin-top:26px}
+  #result.on{display:block;animation:rise .55s cubic-bezier(.2,.8,.2,1)}
+  @keyframes rise{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+
+  .verdict{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--stamp);border-radius:12px;padding:20px;margin-bottom:18px}
+  .verdict .vk{font-family:'JetBrains Mono';font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--stamp);margin-bottom:9px}
+  .verdict h2{font-family:'Newsreader';font-weight:600;font-size:23px;line-height:1.25;letter-spacing:-.01em}
+
+  .urgency{display:inline-flex;align-items:center;gap:8px;margin-top:14px;padding:8px 14px;border-radius:999px;font-family:'DM Sans';font-weight:600;font-size:13px}
+  .urgency .d{width:9px;height:9px;border-radius:50%}
+  .u-alta{background:rgba(178,58,46,.12);color:var(--stamp-deep)}.u-alta .d{background:var(--stamp)}
+  .u-media{background:rgba(154,123,63,.14);color:var(--gold)}.u-media .d{background:var(--gold)}
+  .u-baja{background:rgba(31,78,70,.12);color:var(--seal)}.u-baja .d{background:var(--seal)}
+
+  .sec{margin-bottom:18px}
+  .sec-h{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+  .sec-h .n{font-family:'JetBrains Mono';font-size:11px;color:var(--paper);background:var(--ink);width:22px;height:22px;border-radius:5px;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+  .sec-h h3{font-family:'Newsreader';font-weight:600;font-size:18px}
+
+  .plain{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:17px;font-size:15.5px;color:var(--ink);line-height:1.6}
+
+  .todo{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .todo .item{display:flex;gap:13px;padding:14px 16px;border-bottom:1px solid var(--line);align-items:flex-start}
+  .todo .item:last-child{border-bottom:none}
+  .todo .chk{flex:0 0 auto;width:22px;height:22px;border:2px solid var(--seal);border-radius:6px;margin-top:1px;cursor:pointer;transition:.15s;position:relative}
+  .todo .chk.done{background:var(--seal)}
+  .todo .chk.done::after{content:"✓";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#f3ede0;font-size:13px;font-weight:700}
+  .todo .tx{font-size:14.5px;color:var(--ink);transition:.15s}
+  .todo .tx.done{text-decoration:line-through;color:var(--ink-soft);opacity:.6}
+
+  .deadbox{display:flex;gap:13px;background:rgba(178,58,46,.06);border:1px solid rgba(178,58,46,.25);border-radius:12px;padding:15px 16px;align-items:center}
+  .deadbox .cal{flex:0 0 auto;width:46px;height:50px;background:var(--card);border:1px solid var(--line);border-radius:8px;overflow:hidden;text-align:center}
+  .deadbox .cal .top{background:var(--stamp);color:#fff;font-family:'JetBrains Mono';font-size:8px;letter-spacing:.1em;padding:3px 0;text-transform:uppercase}
+  .deadbox .cal .day{font-family:'Newsreader';font-weight:600;font-size:22px;line-height:1.3;color:var(--ink)}
+  .deadbox .dtxt{font-size:14px;color:var(--ink)}
+  .deadbox .dtxt b{display:block;font-family:'JetBrains Mono';font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--stamp);margin-bottom:3px}
+
+  .terms{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .term{padding:13px 16px;border-bottom:1px solid var(--line)}
+  .term:last-child{border-bottom:none}
+  .term b{font-family:'JetBrains Mono';font-size:13px;color:var(--seal);font-weight:500}
+  .term span{display:block;font-size:14px;color:var(--ink-soft);margin-top:3px}
+
+  .watch{background:rgba(178,58,46,.05);border:1px dashed rgba(178,58,46,.4);border-radius:12px;padding:16px}
+  .watch .wi{display:flex;gap:10px;font-size:14px;margin-bottom:9px;align-items:flex-start}
+  .watch .wi:last-child{margin-bottom:0}
+  .watch .wi .ic{color:var(--stamp);flex:0 0 auto;font-weight:700}
+
+  .locked{position:relative;overflow:hidden}
+  .locked .inner{filter:blur(6px);user-select:none;opacity:.55}
+  .locked .lockover{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;background:linear-gradient(180deg,rgba(247,241,228,.35),rgba(247,241,228,.9))}
+  .locked .lockover b{font-family:'DM Sans';font-weight:600;font-size:14px;color:var(--ink)}
+  .lockbtn{cursor:pointer;background:var(--stamp);color:#fff;border:none;border-radius:9px;padding:9px 18px;font-family:'DM Sans';font-weight:600;font-size:13px}
+
+  .actions{display:flex;gap:10px;margin-top:22px}
+  .actions button{flex:1;cursor:pointer;border-radius:11px;padding:14px;font-family:'DM Sans';font-weight:600;font-size:14px;border:1px solid var(--line);background:transparent;color:var(--ink);transition:.16s}
+  .actions .save{background:var(--ink);color:var(--paper);border:none}
+  .actions button:hover{border-color:var(--seal)}
+
+  .promo{margin-top:18px;border:1px dashed var(--line);border-radius:14px;padding:18px;text-align:center;background:rgba(31,78,70,.04)}
+  .promo h3{font-family:'Newsreader';font-weight:600;font-size:19px;margin-bottom:5px}
+  .promo p{color:var(--ink-soft);font-size:13.5px;margin-bottom:14px}
+  .promo button{cursor:pointer;border:none;border-radius:10px;padding:12px 26px;font-family:'DM Sans';font-weight:700;font-size:15px;background:var(--seal);color:#f3ede0}
+
+  /* PAYWALL */
+  .overlay{position:fixed;inset:0;background:rgba(30,24,15,.72);backdrop-filter:blur(6px);display:none;align-items:flex-end;justify-content:center;z-index:60}
+  .overlay.on{display:flex;animation:fade .25s}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+  .modal{background:var(--paper);border:1px solid var(--line);border-radius:22px 22px 0 0;width:100%;max-width:600px;padding:26px 22px 36px;max-height:92vh;overflow-y:auto;animation:up .35s cubic-bezier(.2,.8,.2,1)}
+  @keyframes up{from{transform:translateY(100%)}to{transform:none}}
+  .modal .x{float:right;background:none;border:none;color:var(--ink-soft);font-size:25px;cursor:pointer;line-height:1}
+  .modal h2{font-family:'Newsreader';font-weight:600;font-size:27px;letter-spacing:-.01em}
+  .modal h2 .em{font-style:italic;color:var(--stamp)}
+  .modal .msub{color:var(--ink-soft);font-size:14px;margin:5px 0 20px}
+  .feat{display:flex;gap:10px;align-items:flex-start;font-size:14px;margin-bottom:10px}
+  .feat .ck{color:var(--seal);flex:0 0 auto;font-weight:700}
+  .plan{border:1px solid var(--line);border-radius:13px;padding:15px;margin-top:11px;cursor:pointer;transition:.16s;display:flex;justify-content:space-between;align-items:center;position:relative;background:var(--card)}
+  .plan:hover{border-color:var(--seal)}
+  .plan.on{border-color:var(--seal);background:rgba(31,78,70,.07)}
+  .plan .pn{font-family:'Newsreader';font-weight:600;font-size:17px}
+  .plan .pd{font-family:'JetBrains Mono';font-size:11px;color:var(--ink-soft);margin-top:3px}
+  .plan .pp{font-family:'Newsreader';font-weight:600;font-size:21px;text-align:right}
+  .plan .pp small{display:block;font-size:10px;color:var(--ink-soft);font-family:'JetBrains Mono'}
+  .plan .badge{position:absolute;top:-9px;left:15px;background:var(--stamp);color:#fff;font-family:'JetBrains Mono';font-size:9px;letter-spacing:.1em;text-transform:uppercase;padding:3px 9px;border-radius:999px;font-weight:500}
+  .paynow{margin-top:18px;width:100%;cursor:pointer;border:none;border-radius:12px;padding:16px;background:var(--seal);color:#f3ede0;font-family:'DM Sans';font-weight:700;font-size:16px}
+  .trust{text-align:center;margin-top:13px;font-family:'JetBrains Mono';font-size:10.5px;color:var(--ink-soft)}
+
+  footer{text-align:center;margin-top:38px;font-family:'JetBrains Mono';font-size:11px;color:#8a7e66;line-height:1.9}
+  .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(18px);opacity:0;background:var(--ink);color:var(--paper);font-weight:600;font-size:14px;padding:11px 22px;border-radius:999px;transition:.3s;z-index:99;pointer-events:none}
+  .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="stamp-rot">Sin<br>jerga</div>
+    <div class="seal-mark">Tu traductor de papeleo</div>
+    <h1>En <span class="em">Claro</span></h1>
+    <div class="lede">Pega esa carta, multa, contrato o correo oficial que no entiendes. Te digo qué dice, qué te piden y qué hacer — en lenguaje normal.</div>
+  </header>
+
+  <div class="how">
+    <div><b>1</b>Pega el texto</div>
+    <div><b>2</b>Lo traducimos</div>
+    <div><b>3</b>Sabes qué hacer</div>
+  </div>
+
+  <div class="composer" id="composer">
+    <label class="field-label">Pega aquí el documento que recibiste</label>
+    <textarea id="doc" placeholder="Copia y pega el texto tal cual viene. Da igual si es largo, confuso o lleno de tecnicismos legales. Cuanto más completo, mejor te lo explico."></textarea>
+
+    <div class="kinds" id="kinds">
+      <div class="kind on" data-k="general">Detectar solo</div>
+      <div class="kind" data-k="multa o sanción">Multa</div>
+      <div class="kind" data-k="banco o finanzas">Banco</div>
+      <div class="kind" data-k="contrato o alquiler">Contrato</div>
+      <div class="kind" data-k="impuestos o hacienda">Impuestos</div>
+      <div class="kind" data-k="médico o salud">Médico</div>
+      <div class="kind" data-k="trabajo o laboral">Laboral</div>
+    </div>
+
+    <button class="go" id="go">Explicármelo en claro →</button>
+    <div class="meter">Documentos gratis hoy: <b id="left">3</b></div>
+    <div class="err" id="err"></div>
+  </div>
+
+  <div class="loading" id="loading">
+    <div class="scan"></div>
+    <p id="loadtxt">Leyendo el documento…</p>
+  </div>
+
+  <div id="result">
+    <div class="verdict">
+      <div class="vk">En una frase</div>
+      <h2 id="oneLine">—</h2>
+      <div id="urgencyBox"></div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-h"><div class="n">1</div><h3>Qué dice de verdad</h3></div>
+      <div class="plain" id="summary">—</div>
+    </div>
+
+    <div class="sec" id="deadlineSec" style="display:none">
+      <div class="sec-h"><div class="n">!</div><h3>Fecha límite</h3></div>
+      <div class="deadbox" id="deadbox"></div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-h"><div class="n">2</div><h3>Qué tienes que hacer</h3></div>
+      <div class="todo" id="todo"></div>
+    </div>
+
+    <div class="sec locked" id="termsSec">
+      <div class="sec-h"><div class="n">3</div><h3>Palabras difíciles, explicadas</h3></div>
+      <div class="inner"><div class="terms" id="terms"></div></div>
+      <div class="lockover"><b>🔒 Disponible en Pro</b><button class="lockbtn" onclick="openPay()">Desbloquear</button></div>
+    </div>
+
+    <div class="sec locked" id="watchSec">
+      <div class="sec-h"><div class="n">4</div><h3>Ojo con esto</h3></div>
+      <div class="inner"><div class="watch" id="watch"></div></div>
+      <div class="lockover"><b>🔒 Disponible en Pro</b><button class="lockbtn" onclick="openPay()">Desbloquear</button></div>
+    </div>
+
+    <div class="promo" id="promo">
+      <h3>¿Y ahora qué hago exactamente?</h3>
+      <p>Desbloquea las advertencias, el glosario y un borrador de respuesta listo para enviar.</p>
+      <button onclick="openPay()">Ver En Claro Pro</button>
+    </div>
+
+    <div class="actions">
+      <button class="save" onclick="copySummary()">⬇ Copiar resumen</button>
+      <button onclick="reset()">↻ Otro documento</button>
+    </div>
+  </div>
+
+  <footer>
+    En Claro te ayuda a entender, no sustituye asesoría legal, médica ni financiera profesional.<br>
+    Para decisiones importantes, confirma con un profesional.<br>
+    © 2026 En Claro
+  </footer>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <button class="x" onclick="closePay()">×</button>
+    <h2>En Claro <span class="em">Pro</span></h2>
+    <div class="msub">Deja de adivinar qué dice el papeleo. Entiéndelo entero.</div>
+    <div class="feat"><span class="ck">✓</span><div>Documentos <b>ilimitados</b></div></div>
+    <div class="feat"><span class="ck">✓</span><div>Glosario de términos y <b>advertencias</b> (cláusulas trampa, cargos ocultos)</div></div>
+    <div class="feat"><span class="ck">✓</span><div><b>Borrador de respuesta</b> listo para enviar (alegar multa, responder al banco…)</div></div>
+    <div class="feat"><span class="ck">✓</span><div>Documentos largos sin recortes</div></div>
+
+    <div class="plan on" data-plan="mes" onclick="pick(this,'mes')">
+      <div><div class="pn">Mensual</div><div class="pd">cancela cuando quieras</div></div>
+      <div class="pp">5,99 €<small>/ mes</small></div>
+    </div>
+    <div class="plan" data-plan="ano" onclick="pick(this,'ano')">
+      <div class="badge">Ahorra 65%</div>
+      <div><div class="pn">Anual</div><div class="pd">2,08 €/mes · facturado 24,99 €</div></div>
+      <div class="pp">24,99 €<small>/ año</small></div>
+    </div>
+    <div class="plan" data-plan="pase" onclick="pick(this,'pase')">
+      <div><div class="pn">Pase de 48 h</div><div class="pd">un trámite puntual</div></div>
+      <div class="pp">2,49 €<small>/ 48 h</small></div>
+    </div>
+
+    <button class="paynow" id="paynow" onclick="pay()">Empezar · 5,99 €/mes</button>
+    <div class="trust">Pago seguro · sin compromiso · App Store · Google Play · Stripe</div>
+  </div>
+</div>
+
+<div class="toast" id="toast">Copiado ✓</div>
+
+<script>
+  const $=id=>document.getElementById(id);
+  const FREE=3; let left=FREE; let pro=false; let last=null;
+  let kind='general'; let plan={id:'mes',label:'5,99 €/mes'};
+  $('left').textContent=left;
+
+  document.querySelectorAll('.kind').forEach(k=>k.onclick=()=>{
+    document.querySelectorAll('.kind').forEach(x=>x.classList.remove('on'));
+    k.classList.add('on');kind=k.dataset.k;
+  });
+
+  function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),1700);}
+  function showErr(m){$('err').textContent=m;$('err').classList.add('on');}
+  function clrErr(){$('err').classList.remove('on');}
+
+  const loadMsgs=['Leyendo el documento…','Buscando lo importante…','Detectando fechas y plazos…','Traduciendo a lenguaje normal…'];
+  let loadIv;
+
+  $('go').onclick=run;
+  async function run(){
+    clrErr();
+    const doc=$('doc').value.trim();
+    if(doc.length<15){showErr('Pega un poco más de texto para poder ayudarte ✦');return;}
+    if(!pro && left<=0){openPay();return;}
+
+    $('composer').style.opacity=.4;$('go').disabled=true;
+    $('result').classList.remove('on');$('loading').classList.add('on');
+    let i=0;$('loadtxt').textContent=loadMsgs[0];
+    loadIv=setInterval(()=>{i=(i+1)%loadMsgs.length;$('loadtxt').textContent=loadMsgs[i];},1100);
+
+    try{
+      const res=await fetch("/api/analizar",{
+        method:"POST",headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({ doc, kind })
+      });
+      if(!res.ok)throw new Error("server");
+      const r=await res.json();
+      if(r.error)throw new Error(r.error);
+      last=r;
+      if(!pro){left--;$('left').textContent=left;}
+      render(r);
+    }catch(e){
+      clearInterval(loadIv);$('loading').classList.remove('on');
+      $('composer').style.opacity=1;$('go').disabled=false;
+      showErr('No se pudo analizar. Inténtalo otra vez en un momento.');
+      console.error(e);
+    }
+  }
+
+  function render(r){
+    clearInterval(loadIv);$('loading').classList.remove('on');
+    $('composer').style.opacity=1;$('go').disabled=false;
+
+    $('oneLine').textContent=r.oneLine||'—';
+
+    const u=(r.urgency||'media').toLowerCase();
+    const ucls=u.includes('alta')?'u-alta':u.includes('baja')?'u-baja':'u-media';
+    const ulabel=u.includes('alta')?'Urgente — actúa pronto':u.includes('baja')?'Sin prisa':'Atención moderada';
+    $('urgencyBox').innerHTML=`<div class="urgency ${ucls}"><span class="d"></span>${ulabel}</div>`;
+
+    $('summary').textContent=r.summary||'—';
+
+    // deadline
+    if(r.deadline && r.deadline.has){
+      $('deadlineSec').style.display='block';
+      $('deadbox').innerHTML=`<div class="cal"><div class="top">Plazo</div><div class="day">${r.deadline.short||'!'}</div></div>
+        <div class="dtxt"><b>Fecha límite</b>${r.deadline.text||''}</div>`;
+    }else{$('deadlineSec').style.display='none';}
+
+    // todo
+    const td=$('todo');td.innerHTML='';
+    (r.actions||[]).forEach(a=>{
+      const it=document.createElement('div');it.className='item';
+      it.innerHTML=`<div class="chk"></div><div class="tx">${a}</div>`;
+      const chk=it.querySelector('.chk'),tx=it.querySelector('.tx');
+      chk.onclick=()=>{chk.classList.toggle('done');tx.classList.toggle('done');};
+      td.appendChild(it);
+    });
+
+    // terms (pro)
+    const tm=$('terms');tm.innerHTML='';
+    (r.terms||[]).forEach(t=>{
+      const d=document.createElement('div');d.className='term';
+      d.innerHTML=`<b>${t.word}</b><span>${t.meaning}</span>`;tm.appendChild(d);
+    });
+    // watch (pro)
+    const w=$('watch');w.innerHTML='';
+    (r.warnings||[]).forEach(x=>{
+      const d=document.createElement('div');d.className='wi';
+      d.innerHTML=`<span class="ic">!</span><div>${x}</div>`;w.appendChild(d);
+    });
+
+    // lock/unlock pro sections
+    if(pro){
+      $('termsSec').classList.remove('locked');
+      $('watchSec').classList.remove('locked');
+      $('promo').style.display='none';
+    }else{
+      $('termsSec').classList.add('locked');
+      $('watchSec').classList.add('locked');
+      $('promo').style.display='block';
+    }
+
+    $('result').classList.add('on');
+    $('result').scrollIntoView({behavior:'smooth',block:'start'});
+  }
+
+  function reset(){$('result').classList.remove('on');$('doc').value='';window.scrollTo({top:0,behavior:'smooth'});$('doc').focus();}
+
+  function copySummary(){
+    if(!last)return;
+    let txt=`EN CLARO\n\n${last.oneLine}\n\nQué dice: ${last.summary}\n\nQué hacer:\n`+(last.actions||[]).map(a=>'• '+a).join('\n');
+    navigator.clipboard.writeText(txt).then(()=>toast('Resumen copiado ✓'));
+  }
+
+  function openPay(){$('overlay').classList.add('on');document.body.style.overflow='hidden';}
+  function closePay(){$('overlay').classList.remove('on');document.body.style.overflow='';}
+  function pick(el,id){document.querySelectorAll('.plan').forEach(p=>p.classList.remove('on'));el.classList.add('on');
+    const m={mes:'5,99 €/mes',ano:'24,99 €/año',pase:'2,49 € · 48 h'};plan={id,label:m[id]};
+    $('paynow').textContent='Empezar · '+m[id];}
+  function pay(){
+    // INTEGRACIÓN REAL: aquí va Stripe Checkout o IAP cuando quieras cobrar.
+    $('paynow').textContent='Procesando…';
+    setTimeout(()=>{pro=true;closePay();$('paynow').textContent='Empezar · '+plan.label;
+      toast('¡Ya eres Pro ✓!');if(last)render(last);},1100);
+  }
+</script>
+</body>
+</html>
